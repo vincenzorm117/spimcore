@@ -11,30 +11,31 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 		case 0x0: // Z = A+ B
 			*ALUresult = A + B;
 			break;
+
 		case 0x1: // Z = A – B
 			*ALUresult = A - B;
 			break;
+
 		case 0x2: // if A < B, Z = 1; otherwise, Z = 0
-			if( !(A & 1 << 31) && !(B & 1 << 31) )
-				*ALUresult = (A < B) ? 1 : 0;
-			else if( (A & 1 << 31) && (B & 1 << 31) )
-				*ALUresult = (A > B) ? 1 : 0;
-			else if( !(A & 1 << 31) && (B & 1 << 31) )
-				*ALUresult = 0;
-			else
-				*ALUresult = 1;
+			*ALUresult = ((int)A < (int)B) ? 1 : 0;
 			break;
+
 		case 0x3: // if A < B, Z = 1; otherwise, Z = 0 (A and B are unsigned integers)
 			*ALUresult = (A < B) ? 1 : 0;
 			break;
+
 		case 0x4: // Z = A AND B
 			*ALUresult = A & B;
 			break;
+
 		case 0x5: // Z = A OR B
 			*ALUresult = A | B;
 			break;
+
 		case 0x6: // Shift left B by 16 bits
 			*ALUresult = B << 16;
+			break;
+
 		case 0x7: // Z = NOT A
 			*ALUresult = !A;
 			
@@ -78,35 +79,42 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 int instruction_decode(unsigned op,struct_controls *controls)
 {
 	switch(op){
+		
 		case 0x0: // add,sub, and, or, slt, sltu
-		// *controls = (struct_controls){ 1,0,2,0,0,07,0,0,1};
-			controls->RegDst   = 1;
-			controls->Jump     = 2;
-			controls->Branch   = 2;  //UNSURE maybe it is 0
-			controls->MemRead  = 0;
-			controls->MemtoReg = 0;
-			controls->ALUOp    = 07;	 //ASK
-			controls->MemWrite = 0;
-			controls->ALUSrc   = 0;
-			controls->RegWrite = 1;
+		 	*controls = (struct_controls){ 1,0,0,0,0,7,0,0,1};
 			break;
+
 		case 0x8: // addi
-			controls->RegDst   = 1;
-			controls->Jump     = 2;
-			controls->Branch   = 2;  //UNSURE maybe it is 0
-			controls->MemRead  = 0;
-			controls->MemtoReg = 0;
-			controls->ALUOp    = 	 //ASK
-			controls->MemWrite = 0;
-			controls->ALUSrc   = 0;
-			controls->RegWrite = 1;
+			*controls = (struct_controls){ 0,0,0,0,0,0,0,1,0};
+			break;
+
 		case 0x23: // lw
+			*controls = (struct_controls){ 0,0,0,1,1,0,0,1,1};
+			break;
+
 		case 0x2b: // sw
+			*controls = (struct_controls){ 0,0,0,0,0,0,1,1,0};
+			break;
+
 		case 0xf:  // lui
+			*controls = (struct_controls){ 0,0,0,0,0,5,0,1,1};
+			break;
+
 		case 0x4:  // beq
+			*controls = (struct_controls){ 0,0,1,0,2,1,0,1,0};
+			break;
+
 		case 0xa:  // slti
+			*controls = (struct_controls){ 0,0,0,0,0,2,0,1,1};
+			break;
+
 		case 0xb:  // sltiu
+			*controls = (struct_controls){ 0,0,0,0,0,3,0,1,1};
+			break;
+
 		case 0x2:  // j
+			*controls = (struct_controls){ 2,1,2,2,2,0,2,2,2};
+			break;
 
 		default: 
 			return 1;
@@ -147,7 +155,7 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
-									//ASK: Might not have to check bounds
+
 	if( ALUresult % 4 == 0 && 0 <= ALUresult && ALUresult < 65536 ){
 
 		if(MemRead  == 1)	*memdata = Mem[ALUresult >> 2];		//ASK: do we need to adjust ALUresult
