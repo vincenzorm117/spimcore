@@ -17,12 +17,8 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 			break;
 
 		case 0x2: // if A < B, Z = 1; otherwise, Z = 0
-<<<<<<< HEAD
 //			*ALUresult = ((int)A < (int)B) ? 1 : 0;
-            if( !(A & (1 << 31)) && !(B & (1 << 31)) )
-=======
 			if( !(A & (1 << 31)) && !(B & (1 << 31)) )
->>>>>>> origin/master
 				*ALUresult = (A < B) ? 1 : 0;
 			else if( (A & (1 << 31)) && (B & (1 << 31)) )
 				*ALUresult = (A > B) ? 1 : 0;
