@@ -17,8 +17,12 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 			break;
 
 		case 0x2: // if A < B, Z = 1; otherwise, Z = 0
+<<<<<<< HEAD
 //			*ALUresult = ((int)A < (int)B) ? 1 : 0;
             if( !(A & (1 << 31)) && !(B & (1 << 31)) )
+=======
+			if( !(A & (1 << 31)) && !(B & (1 << 31)) )
+>>>>>>> origin/master
 				*ALUresult = (A < B) ? 1 : 0;
 			else if( (A & (1 << 31)) && (B & (1 << 31)) )
 				*ALUresult = (A > B) ? 1 : 0;
@@ -46,7 +50,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 
 		case 0x7: // Z = NOT A
 			*ALUresult = !A;
-			
+
 	}
 
 }
@@ -60,7 +64,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 		*instruction = Mem[PC >> 2];
 	else
 		return 1;
-	
+
 	return 0;
 }
 
@@ -69,7 +73,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 /* 10 Points */
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
-	
+
 	*op     = (instruction & 0xfc000000) >> 26; // 11111100 00000000 00000000 00000000
 	*r1     = (instruction & 0x03e00000) >> 21; // 00000011 11100000 00000000 00000000
 	*r2     = (instruction & 0x001f0000) >> 16; // 00000000 00011111 00000000 00000000
@@ -124,7 +128,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
 			*controls = (struct_controls){ 2,1,2,2,2,0,2,2,2};
 			break;
 
-		default: 
+		default:
 			return 1;
 	}
 
@@ -145,7 +149,7 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
 	if(offset & (1 << 15))
-		*extended_value = offset | 0xffff0000;	
+		*extended_value = offset | 0xffff0000;
 	else
 		*extended_value = offset;
 }
@@ -199,7 +203,7 @@ void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char 
 {
 	PC = PC + 4;
 
-	
+
 }
 
 
