@@ -165,17 +165,23 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 			switch(funct){
 				case 0x20:	// add
 					ALUControl = 0x0;
+                    break;
 				case 0x24:	// and
 					ALUControl = 0x4;
+                    break;
 				case 0x25:	// or
 					ALUControl = 0x5;
+                    break;
 				case 0x2a:	// slt  (set less than signed)
 					ALUControl = 0x2;
+                    break;
 				case 0x2b:	// sltu (set less than unsigned)
 					ALUControl = 0x3;
+                    break;
 				default:	// Any other command will halt the program
 					return 1;
 			}
+            break;
 		default:
 			return 1;
 			
