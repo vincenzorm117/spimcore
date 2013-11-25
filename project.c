@@ -74,8 +74,8 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 	*r2     = (instruction & 0x001f0000) >> 16; // 00000000 00011111 00000000 00000000
 	*r3     = (instruction & 0x0000f800) >> 11; // 00000000 00000000 11111000 00000000
 	*funct  =  instruction & 0x0000003f; 		// 00000000 00000000 00000000 00111111
-	*offset =  instruction & 0x0000ffff; 		// 00000000 00000000 11111111 11111111
-	*jsec   =  instruction & 0x03ffffff; 		// 00000011 11111111 11111111 11111111
+	*offset = (instruction & 0x0000ffff) << 2; 	// 00000000 00000000 11111111 11111111
+	*jsec   = (instruction & 0x03ffffff) << 2; 	// 00000011 11111111 11111111 11111111
     
 }
 
@@ -212,7 +212,7 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
     }
 	
 	return 0;
-
+    
 }
 
 
@@ -244,6 +244,9 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC) {
 	*PC = *PC + 4;
+    
+    if(Jump == 1)
+        *PC = (*PC & 0xf0000000) | jsec;
     
     
 }
