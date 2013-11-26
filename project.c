@@ -5,7 +5,7 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero) {
 
-	*Zero = (A - B == 0);
+	*Zero = ((A - B) == 0) ? 1 : 0;
 
 	switch(ALUControl){
 
@@ -46,7 +46,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero) {
 			break;
 
 		case 0x7: // Z = NOT A
-			*ALUresult = !A;
+			*ALUresult = ~A;
 
 	}
 
@@ -74,8 +74,8 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 	*r2     = (instruction & 0x001f0000) >> 16; // 00000000 00011111 00000000 00000000
 	*r3     = (instruction & 0x0000f800) >> 11; // 00000000 00000000 11111000 00000000
 	*funct  =  instruction & 0x0000003f; 		// 00000000 00000000 00000000 00111111
-	*offset = (instruction & 0x0000ffff) << 2; 	// 00000000 00000000 11111111 11111111
-	*jsec   = (instruction & 0x03ffffff) << 2; 	// 00000011 11111111 11111111 11111111
+	*offset =  instruction & 0x0000ffff; 		// 00000000 00000000 11111111 11111111
+	*jsec   =  instruction & 0x03ffffff; 		// 00000011 11111111 11111111 11111111
 
 }
 
@@ -243,12 +243,15 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 /* PC update */
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC) {
-	*PC = *PC + 4;
+	
+	*PC += 4;
+	extended_value <<= 2;
 
+	if(Zero == 1 && Branch == 1)
+		*PC = *PC + extended_value;
+	
     if(Jump == 1)
-        *PC = (*PC & 0xf0000000) | jsec;
-
-
+        *PC = (*PC & 0xf0000000) | (jsec << 2);
 }
 
 
