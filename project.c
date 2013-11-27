@@ -1,7 +1,7 @@
 // CDA 3103 Spimcore MIPS simulation project
 // Functions populated by Vincenzo Marconi and Renee Vanderhoof
 
-
+// Vincenzo filled in the first 5 functions and Renee filled in the last 5
 
 
 #include "spimcore.h"
